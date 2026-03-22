@@ -48,6 +48,10 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
 
     // Pointer-based rotation (Drag/Swipe)
     const handlePointerDown = (e: React.PointerEvent) => {
+      // Prevent browser from trying to drag images/text
+      if (e.pointerType === 'mouse') {
+        e.preventDefault();
+      }
       setIsDragging(true);
       lastPointerX.current = e.clientX;
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -57,13 +61,17 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
       if (!isDragging) return;
       const deltaX = e.clientX - lastPointerX.current;
       lastPointerX.current = e.clientX;
-      // Sensitivity factor: 0.15 for smooth drag
-      setRotation((prev) => prev + deltaX * 0.15);
+      // Sensitivity factor: 0.22 for slightly faster PC drag
+      setRotation((prev) => prev + deltaX * 0.22);
     };
 
     const handlePointerUp = (e: React.PointerEvent) => {
       setIsDragging(false);
-      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch (err) {
+        // Ignore if already released
+      }
     };
 
     // Auto-rotate when not interacting
@@ -93,6 +101,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
+        onDragStart={(e) => e.preventDefault()}
         {...props}
       >
         <div
@@ -102,7 +111,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
             width: '180px',
             height: '260px',
             position: 'relative',
-            pointerEvents: 'none', // Allow events to pass to parent for dragging
+            pointerEvents: isDragging ? 'none' : 'auto', // Disable child interactions during drag to catch all move events
           }}
         >
           {items.map((item, i) => {
@@ -137,7 +146,6 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                     overflow: 'hidden',
                     boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
                     border: '2px solid rgba(255,255,255,0.1)',
-                    pointerEvents: 'auto', // Re-enable pointer events for hover/click on cards if needed
                   }}
                 >
                   <img
