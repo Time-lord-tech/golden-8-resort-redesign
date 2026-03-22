@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, HTMLAttributes } from 'react';
+import React, { useState, useEffect, useRef, type HTMLAttributes } from 'react';
 
 const cn = (...classes: (string | undefined | null | false)[]) => {
   return classes.filter(Boolean).join(' ');

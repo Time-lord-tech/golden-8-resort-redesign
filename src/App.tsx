@@ -4,7 +4,7 @@ import Lenis from 'lenis';
 import { 
   MapPin, Phone, Facebook, ChevronDown, Waves, 
   TreePine, UtensilsCrossed, Star, ArrowRight,
-  Users, Bed, Menu, X, Wind, ParkingCircle
+  Users, Menu, X
 } from 'lucide-react';
 import { CircularGallery, type GalleryItem } from './components/ui/circular-gallery';
 
