@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { BookingSection } from './components/BookingManager';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Lenis from 'lenis';
 import { 
@@ -140,6 +141,7 @@ function Navbar() {
     { label: 'Rooms', href: '#rooms' },
     { label: 'Reviews', href: '#reviews' },
     { label: 'Contact', href: '#contact' },
+    { label: 'Admin', href: '/admin' },
   ];
 
   const darkGlass: React.CSSProperties = {
@@ -215,7 +217,7 @@ function Navbar() {
         </nav>
 
         <a
-          href="#contact"
+          href="#booking"
           className="hidden md:inline-flex items-center gap-2 bg-yellow-500 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-yellow-400 hover:scale-[0.98] active:scale-95 transition-all shadow-lg shadow-yellow-500/30"
         >
           Book Now <ArrowRight size={14} />
@@ -251,8 +253,8 @@ function Navbar() {
               </a>
             ))}
             <a
-              href="#contact"
-              onClick={() => setOpen(false)}
+              href="#booking"
+              onClick={() => { setOpen(false); }}
               className="bg-yellow-500 text-white px-6 py-3 rounded-xl font-bold text-center"
             >
               Book Your Stay
@@ -311,10 +313,10 @@ function Hero() {
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <a
-              href="#rooms"
+              href="#booking"
               className="inline-flex items-center gap-3 bg-yellow-500 text-white px-10 py-4 rounded-2xl font-bold text-base hover:bg-yellow-400 hover:-translate-y-1 active:translate-y-0 transition-all shadow-2xl shadow-yellow-500/20"
             >
-              Explore Stays <ArrowRight size={18} />
+              Book Your Stay <ArrowRight size={18} />
             </a>
             <a
               href="#about"
@@ -605,10 +607,11 @@ function Rooms() {
                   ))}
                 </div>
                 <a
-                  href="#contact"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-[--color-ocean-deep] text-white py-4 rounded-2xl font-bold hover:bg-[--color-ocean-mid] active:scale-[0.98] transition-all"
+                  href="#booking"
+                  onClick={() => window.dispatchEvent(new CustomEvent('select-room', { detail: { id: i.toString(), title: room.title, pax: room.pax, price: Number(room.price.replace(/[^0-9.-]+/g,"")), image_url: room.img, features: room.features, total_rooms: 1, available_rooms: 1 } }))}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-yellow-500 text-[--color-ocean-deep] py-4 rounded-2xl font-bold hover:bg-yellow-400 active:scale-[0.98] transition-all"
                 >
-                  Inquire Now <ArrowRight size={16} />
+                  Book Now <ArrowRight size={16} />
                 </a>
               </div>
             </motion.div>
@@ -735,7 +738,7 @@ function Reviews() {
 function Contact() {
   return (
     <section id="contact" className="py-32 px-6 bg-[--color-cream]">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -794,24 +797,11 @@ function Contact() {
               <input type="text" className="w-full bg-slate-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-yellow-400/40 transition font-medium" placeholder="Contact info" />
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Accommodation Type</label>
-              <select className="w-full bg-slate-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-yellow-400/40 transition font-medium text-slate-700 cursor-pointer">
-                <option>Teepee Room (₱1,500)</option>
-                <option>Family Villa 6–7 pax (₱5,000)</option>
-                <option>Family Villa 8–9 pax (₱6,000)</option>
-                <option>Family Villa 10–12 pax (₱7,000)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Check-in Date</label>
-              <input type="date" className="w-full bg-slate-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-yellow-400/40 transition font-medium" />
-            </div>
-            <div>
               <label className="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Message</label>
-              <textarea className="w-full bg-slate-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-yellow-400/40 transition font-medium h-32 resize-none" placeholder="Additional requests, number of guests, etc." />
+              <textarea className="w-full bg-slate-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-yellow-400/40 transition font-medium h-32 resize-none" placeholder="Questions, concerns, or feedback..." />
             </div>
             <button className="w-full text-white py-5 rounded-2xl font-bold hover:opacity-90 hover:scale-[0.99] active:scale-[0.97] transition-all shadow-xl" style={{ backgroundColor: '#0A2540' }}>
-              Send Reservation Request
+              Send Message
             </button>
           </form>
         </motion.div>
@@ -899,6 +889,7 @@ export default function App() {
       <Reviews />
       <GuestGallery />
       <Contact />
+      <BookingSection />
       <Footer />
     </div>
   );
