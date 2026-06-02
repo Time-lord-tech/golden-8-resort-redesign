@@ -10,7 +10,11 @@ import {
 import { CircularGallery, type GalleryItem } from './components/ui/circular-gallery';
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
-
+// 👋 HOW TO EDIT THIS SECTION:
+// This area contains the text, images, and prices used throughout the website.
+// If you want to change a room's price, update a description, or add a new 
+// image link, you simply edit the text inside the quotes below. 
+// Do not remove the quotes or commas!
 
 const amenities = [
   {
@@ -109,7 +113,11 @@ const reviews = [
 ];
 
 // ── COMPONENTS ────────────────────────────────────────────────────────────────
+// 👇 BELOW ARE THE WEBSITE BLOCKS (COMPONENTS)
+// Each "function" below represents a visual section of the website. 
+// You can edit the HTML/Tailwind classes inside each function to change the layout.
 
+// 🧭 NAVBAR COMPONENT: This controls the top menu bar (logo, links, and mobile menu).
 function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -266,6 +274,7 @@ function Navbar() {
   );
 }
 
+// 🌅 HERO SECTION: The large welcome screen with the background image when you first load the site.
 function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -273,14 +282,19 @@ function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section ref={ref} className="relative min-h-[100dvh] flex items-end overflow-hidden">
-      {/* Parallax Background */}
+    <section ref={ref} className="relative min-h-[100dvh] flex items-end overflow-hidden" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      {/* Parallax Video Background */}
       <motion.div className="absolute inset-0 z-0" style={{ y }}>
-        <img
-          src="/assets/dacf8509-3080-43eb-b543-ed979a7c0391.jpg"
-          alt="Golden 8 Beach panorama"
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/assets/dacf8509-3080-43eb-b543-ed979a7c0391.jpg"
           className="w-full h-full object-cover scale-110"
-        />
+        >
+          <source src="/assets/hero-video.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/70 to-[#0A2540]/20" />
         <div className="absolute inset-0" style={{ backgroundColor: 'rgba(10,37,64,0.45)' }} />
       </motion.div>
@@ -291,7 +305,7 @@ function Hero() {
       {/* Content */}
       <motion.div
         style={{ opacity }}
-        className="relative z-10 w-full max-w-7xl mx-auto px-6 pb-20 md:pb-32"
+        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 pb-16 md:pb-32"
       >
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -303,18 +317,18 @@ function Hero() {
             <span className="w-8 h-px bg-yellow-400" />
             Ditinagyan, Casiguran, Aurora
           </span>
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.95] tracking-tight mb-8">
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.95] tracking-tight mb-6 md:mb-8">
             Where the{' '}
             <em className="not-italic text-shimmer">Shore</em>
             <br />Becomes Home.
           </h1>
-          <p className="font-sans text-white/70 text-lg leading-relaxed max-w-lg mb-10">
+          <p className="font-sans text-white/70 text-base sm:text-lg leading-relaxed max-w-lg mb-8 md:mb-10">
             Tucked away on the scenic coast of Aurora, Golden 8 Beach Resort invites you to slow down, breathe in the salt air, and rediscover the rhythm of island life.
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <a
               href="#booking"
-              className="inline-flex items-center gap-3 bg-yellow-500 text-white px-10 py-4 rounded-2xl font-bold text-base hover:bg-yellow-400 hover:-translate-y-1 active:translate-y-0 transition-all shadow-2xl shadow-yellow-500/20"
+              className="inline-flex items-center gap-3 bg-yellow-500 text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl font-bold text-sm sm:text-base hover:bg-yellow-400 hover:-translate-y-1 active:translate-y-0 transition-all shadow-2xl shadow-yellow-500/20"
             >
               Book Your Stay <ArrowRight size={18} />
             </a>
@@ -368,10 +382,11 @@ function Stats() {
   );
 }
 
+// 📖 ABOUT SECTION: This contains the "Our Story" text and the grid of 4 images.
 function About() {
   return (
-    <section id="about" className="py-32 px-6 bg-[--color-cream] overflow-hidden">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section id="about" className="py-16 md:py-32 px-4 sm:px-6 bg-[--color-cream] overflow-hidden">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-center">
         {/* Images */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
@@ -404,9 +419,9 @@ function About() {
           </div>
 
           {/* Floating badge */}
-          <div className="absolute -bottom-6 -right-6 bg-yellow-500 text-white px-8 py-6 rounded-3xl shadow-2xl shadow-yellow-500/30">
-            <span className="block font-serif font-bold text-3xl">Golden 8</span>
-            <span className="block text-xs uppercase tracking-widest text-white/80 mt-1">Aurora, Philippines</span>
+          <div className="absolute -bottom-4 -right-2 sm:-bottom-6 sm:-right-6 bg-yellow-500 text-white px-5 py-4 sm:px-8 sm:py-6 rounded-2xl sm:rounded-3xl shadow-2xl shadow-yellow-500/30 z-10">
+            <span className="block font-serif font-bold text-xl sm:text-3xl">Golden 8</span>
+            <span className="block text-[10px] sm:text-xs uppercase tracking-widest text-white/80 mt-1">Aurora, Philippines</span>
           </div>
         </motion.div>
 
@@ -421,7 +436,7 @@ function About() {
             <span className="w-8 h-px bg-yellow-600" />
             Our Story
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-8 text-[--color-ocean-deep]">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-6 md:mb-8 text-[--color-ocean-deep]">
             A family refuge on the coast of Aurora.
           </h2>
           <p className="text-slate-600 text-lg leading-relaxed mb-6">
@@ -457,8 +472,17 @@ function StickyScroll() {
     target: containerRef,
     offset: ['start start', 'end end'],
   });
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const unsub = scrollYProgress.on('change', (v) => {
       const idx = Math.min(
         amenities.length - 1,
@@ -467,8 +491,65 @@ function StickyScroll() {
       setActiveIndex(idx);
     });
     return unsub;
-  }, [scrollYProgress]);
+  }, [scrollYProgress, isMobile]);
 
+  // Mobile: Card-based layout
+  if (isMobile) {
+    return (
+      <section id="amenities" style={{ backgroundColor: '#0A2540' }}>
+        <div className="px-4 sm:px-6 pt-16 pb-16">
+          <span className="inline-flex items-center gap-2 text-yellow-400 text-[11px] uppercase tracking-[0.3em] font-bold mb-6">
+            <span className="w-8 h-px bg-yellow-400" />
+            Features & Amenities
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white leading-tight max-w-xl mb-10">
+            Every reason to stay a little longer.
+          </h2>
+
+          <div className="flex flex-col gap-6">
+            {amenities.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.05, duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+                className="rounded-3xl overflow-hidden ring-1 ring-white/10"
+              >
+                <div className="h-48 relative overflow-hidden">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-80" />
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <span className="block text-yellow-400 text-[9px] uppercase tracking-[0.3em] font-bold mb-1">
+                      {item.subtitle}
+                    </span>
+                    <h3 className="font-serif text-xl font-bold text-white leading-tight">
+                      {item.title}
+                    </h3>
+                  </div>
+                </div>
+                <div className="bg-white/[0.04] p-5">
+                  <p className="text-white/55 text-sm leading-relaxed mb-4">
+                    {item.desc}
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-yellow-400/30 text-yellow-400 text-xs font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+                    {item.tag}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Desktop: Sticky scroll layout
   return (
     <section id="amenities" style={{ backgroundColor: '#0A2540' }}>
       {/* Section Header */}
@@ -486,7 +567,7 @@ function StickyScroll() {
       <div ref={containerRef} className="relative" style={{ height: `${amenities.length * 100}vh` }}>
         <div className="sticky top-0 h-screen flex overflow-hidden">
           {/* Left: Text items */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 lg:px-16 overflow-hidden">
+          <div className="w-1/2 flex flex-col justify-center px-16 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeIndex}
@@ -526,7 +607,7 @@ function StickyScroll() {
           </div>
 
           {/* Right: Image */}
-          <div className="hidden lg:block lg:w-1/2 relative">
+          <div className="w-1/2 relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeIndex}
@@ -551,16 +632,18 @@ function StickyScroll() {
   );
 }
 
+// 🛏️ ROOMS SECTION: Displays the list of rooms configured in the DATA section above.
+// If you want to change how the room cards look, edit the HTML inside this function.
 function Rooms() {
   return (
-    <section id="rooms" className="py-32 px-6 bg-[--color-cream]">
+    <section id="rooms" className="py-16 md:py-32 px-4 sm:px-6 bg-[--color-cream]">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-20">
+        <div className="mb-10 md:mb-20">
           <span className="inline-flex items-center gap-2 text-yellow-600 text-[11px] uppercase tracking-[0.3em] font-bold mb-6">
             <span className="w-8 h-px bg-yellow-600" />
             Accommodations & Rates
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold leading-tight text-[--color-ocean-deep] max-w-xl">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-[--color-ocean-deep] max-w-xl">
             Find your perfect stay.
           </h2>
         </div>
@@ -577,18 +660,18 @@ function Rooms() {
               className="bg-white rounded-[2.5rem] overflow-hidden group cursor-pointer transition-all duration-500"
               style={{ boxShadow: '0 4px 20px -8px rgba(10,37,64,0.08)' }}
             >
-              <div className="h-64 overflow-hidden relative">
+              <div className="h-48 sm:h-64 overflow-hidden relative">
                 <img
                   src={room.img}
                   alt={room.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute top-6 right-6 bg-yellow-500 text-white px-4 py-2 rounded-xl font-bold text-lg shadow-xl">
+                <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-yellow-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-bold text-base sm:text-lg shadow-xl">
                   {room.price}
-                  <span className="text-xs font-normal text-white/80">/night</span>
+                  <span className="text-[10px] sm:text-xs font-normal text-white/80">/night</span>
                 </div>
               </div>
-              <div className="p-8">
+              <div className="p-5 sm:p-8">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="font-serif text-2xl font-bold text-[--color-ocean-deep]">{room.title}</h3>
@@ -640,6 +723,8 @@ function Marquee() {
 }
 
 // ── GUEST GALLERY ─────────────────────────────────────────────────────────
+// 📸 This handles the spinning circle gallery of photos.
+// You can add or replace photos by changing the urls inside 'galleryItems'.
 
 const galleryItems: GalleryItem[] = [
   { common: 'Beach Stroll', photo: { url: '/assets/carosel/0ac705f2-eae2-4e3a-8cee-671d4ecd3289.jpg', text: 'A guest enjoying a peaceful morning walk along the golden sands.' } },
@@ -668,24 +753,44 @@ const galleryItems: GalleryItem[] = [
   { common: 'Birthday Celebrations', photo: { url: '/assets/carosel/ff567965-9d68-42c6-89b4-9968c4556cfb.jpg', text: 'Creating personalized and memorable experiences for guest birthdays.' } },
 ];
 
+// Responsive wrapper for CircularGallery that adjusts radius for mobile
+function ResponsiveGallery({ items }: { items: GalleryItem[] }) {
+  const [radius, setRadius] = useState(850);
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w < 480) setRadius(650);
+      else if (w < 768) setRadius(720);
+      else if (w < 1024) setRadius(780);
+      else setRadius(850);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  return <CircularGallery items={items} radius={radius} autoRotateSpeed={0.015} />;
+}
+
 function GuestGallery() {
   return (
     <section className="overflow-hidden" style={{ backgroundColor: '#0A2540' }}>
-      <div className="max-w-7xl mx-auto px-6 pt-32 pb-12 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 md:pt-32 pb-8 md:pb-12 text-center">
         <span className="inline-flex items-center gap-2 text-yellow-400 text-[11px] uppercase tracking-[0.3em] font-bold mb-6">
           <span className="w-8 h-px bg-yellow-400" />
           Guest Moments
           <span className="w-8 h-px bg-yellow-400" />
         </span>
-        <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
+        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white">
           Memories made at Golden 8.
         </h2>
-        <p className="text-white/40 text-sm mt-4">Scroll → rotates the gallery</p>
+        <p className="text-white/40 text-xs sm:text-sm mt-4">Drag or scroll to explore the gallery</p>
       </div>
-      <div style={{ width: '100%', height: '500px' }}>
-        <CircularGallery items={galleryItems} radius={850} autoRotateSpeed={0.015} />
+      <div className="gallery-container" style={{ width: '100%', height: 'clamp(320px, 50vw, 500px)' }}>
+        <ResponsiveGallery items={galleryItems} />
       </div>
-      <div className="pb-16" />
+      <div className="pb-10 md:pb-16" />
     </section>
   );
 }
@@ -693,15 +798,15 @@ function GuestGallery() {
 
 function Reviews() {
   return (
-    <section id="reviews" className="py-32 px-6" style={{ backgroundColor: '#0A2540' }}>
+    <section id="reviews" className="py-16 md:py-32 px-4 sm:px-6" style={{ backgroundColor: '#0A2540' }}>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-20 text-center">
+        <div className="mb-10 md:mb-20 text-center">
           <span className="inline-flex items-center gap-2 text-yellow-400 text-[11px] uppercase tracking-[0.3em] font-bold mb-6">
             <span className="w-8 h-px bg-yellow-400" />
             Guest Reviews
             <span className="w-8 h-px bg-yellow-400" />
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white">
             Guests who stayed, tell it best.
           </h2>
         </div>
@@ -737,7 +842,7 @@ function Reviews() {
 
 function Contact() {
   return (
-    <section id="contact" className="py-32 px-6 bg-[--color-cream]">
+    <section id="contact" className="py-16 md:py-32 px-4 sm:px-6 bg-[--color-cream]">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -748,7 +853,7 @@ function Contact() {
             <span className="w-8 h-px bg-yellow-600" />
             Get In Touch
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold leading-tight text-[--color-ocean-deep] mb-10">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-[--color-ocean-deep] mb-8 md:mb-10">
             Ready to escape to the shore?
           </h2>
           <div className="space-y-8">
@@ -780,7 +885,7 @@ function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.15 }}
-          className="bg-white rounded-[2.5rem] p-10 shadow-xl shadow-slate-100/50"
+          className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 shadow-xl shadow-slate-100/50"
         >
           <h3 className="font-serif text-2xl font-bold mb-8" style={{ color: '#0A2540' }}>Send an Inquiry</h3>
           <form className="space-y-6">
@@ -812,7 +917,7 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="text-white pt-20 pb-10 px-6" style={{ backgroundColor: '#060f1a' }}>
+    <footer className="text-white pt-14 md:pt-20 pb-8 md:pb-10 px-4 sm:px-6" style={{ backgroundColor: '#060f1a' }}>
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pb-16 border-b border-white/10">
           <div>
@@ -856,6 +961,10 @@ function Footer() {
 }
 
 // ── APP ───────────────────────────────────────────────────────────────────────
+// 🧩 THE MAIN APP COMPONENT
+// This is the "Assembly Line". It takes all the components written above
+// (Navbar, Hero, Stats, etc.) and stacks them in order to build the final webpage.
+// If you want to re-order sections, move these tags around!
 
 export default function App() {
   useEffect(() => {

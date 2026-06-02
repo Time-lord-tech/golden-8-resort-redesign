@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import { CheckCircle, XCircle, LogOut } from 'lucide-react';
 
+// 👨‍💼 ADMIN DASHBOARD COMPONENT
+// This page is completely separate from the main website. It handles staff login
+// and shows the internal backend system where you review uploaded GCash receipts.
 export default function Admin() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -65,6 +68,9 @@ export default function Admin() {
   );
 }
 
+// 🔐 LOGIN SCREEN
+// This is what staff members see before they access the dashboard.
+// It directly talks to Supabase Auth.
 function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -143,6 +149,8 @@ function AdminLogin() {
   );
 }
 
+// 📑 DASHBOARD TABS
+// Controls the top menu where you switch between "Pending", "Upcoming", etc.
 function Dashboard() {
   const [activeTab, setActiveTab] = useState<'pending' | 'reserved' | 'checked_in' | 'completed' | 'cancelled'>('pending');
 
@@ -173,6 +181,9 @@ function Dashboard() {
   );
 }
 
+// 📊 ORDERS TABLE (THE MAIN DATA GRID)
+// This is the core logic that fetches bookings from the Supabase database
+// and renders them as cards, complete with GCash receipt images.
 function OrdersTable({ filterStatus }: { filterStatus: string }) {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

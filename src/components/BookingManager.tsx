@@ -21,6 +21,8 @@ type RoomSelection = {
 
 export function BookingSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  
+  // 🧭 STEP TRACKER: We use this number (1, 2, 3, or 4) to know which part of the form to show.
   const [step, setStep] = useState(1);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,6 +82,8 @@ export function BookingSection() {
     return () => window.removeEventListener('select-room', handleRoomSelect);
   }, []);
 
+  // 📥 FETCH ROOMS FROM DATABASE
+  // When the component loads, it asks Supabase for all rooms, sorted by price.
   const fetchRooms = async () => {
     setLoading(true);
     const { data, error } = await supabase.from('rooms').select('*').order('price', { ascending: true });
@@ -135,7 +139,7 @@ export function BookingSection() {
       {/* Top gradient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-yellow-500/10 rounded-full blur-[200px]" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-24 md:py-32">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-32">
         {/* Section Header - only on Step 1 */}
         <AnimatePresence mode="wait">
           {step === 1 && (
@@ -151,7 +155,7 @@ export function BookingSection() {
                 Reserve Your Paradise
                 <span className="w-8 h-px bg-yellow-400" />
               </span>
-              <h2 className="font-serif text-4xl md:text-6xl font-bold text-white leading-tight mb-4">
+              <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl font-bold text-white leading-tight mb-4">
                 Book your <em className="italic text-yellow-400">stay</em>.
               </h2>
               <p className="text-white/40 max-w-lg mx-auto text-sm leading-relaxed">
@@ -170,15 +174,15 @@ export function BookingSection() {
               { num: 3, label: 'Payment' },
             ].map((s, i) => (
               <div key={s.num} className="flex items-center">
-                <div className={`flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-300 ${
+                <div className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-full transition-all duration-300 ${
                   step === s.num ? 'bg-yellow-500 text-[#0A2540]' :
                   step > s.num ? 'bg-white/10 text-yellow-400' : 'bg-white/5 text-white/30'
                 }`}>
-                  <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+                  <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full text-[10px] sm:text-xs font-bold flex items-center justify-center ${
                     step === s.num ? 'bg-[#0A2540] text-yellow-400' :
                     step > s.num ? 'bg-yellow-400/20 text-yellow-400' : 'bg-white/10 text-white/40'
                   }`}>{step > s.num ? '✓' : s.num}</span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider hidden sm:inline">{s.label}</span>
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider hidden sm:inline">{s.label}</span>
                 </div>
                 {i < 2 && <div className={`w-8 md:w-16 h-px mx-1 ${step > s.num ? 'bg-yellow-400/40' : 'bg-white/10'}`} />}
               </div>
@@ -186,6 +190,11 @@ export function BookingSection() {
           </div>
         )}
 
+        {/* 
+          🎭 CONDITIONAL RENDERING: Notice below how we use `{step === 1 && (...)}`
+          This is a React trick. If 'step' equals 1, it renders the Step 1 HTML. 
+          If step changes to 2, step 1 disappears and step 2 appears.
+        */}
         <AnimatePresence mode="wait">
           {/* ═══════════════════ STEP 1: DATES & ROOMS ═══════════════════ */}
           {step === 1 && (
@@ -340,8 +349,8 @@ export function BookingSection() {
               )}
 
               {/* Bottom Bar */}
-              <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/10 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-8 text-center md:text-left">
+              <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
+                <div className="flex items-center gap-4 sm:gap-8 text-center md:text-left w-full md:w-auto justify-around md:justify-start">
                   <div>
                     <p className="text-[10px] uppercase font-bold tracking-widest text-white/30 mb-1">Rooms</p>
                     <p className="text-white font-bold text-lg">{totalRoomCount}</p>
@@ -550,7 +559,7 @@ export function BookingSection() {
               </div>
 
               {/* QR Code Section */}
-              <div className="bg-white/[0.04] rounded-3xl border border-white/10 p-6 md:p-8 mb-6 flex flex-col md:flex-row gap-8 items-center justify-center">
+               <div className="bg-white/[0.04] rounded-3xl border border-white/10 p-4 sm:p-6 md:p-8 mb-6 flex flex-col md:flex-row gap-6 sm:gap-8 items-center justify-center">
                 <div className="w-48 h-48 bg-white p-2 rounded-xl border-4 border-blue-500 overflow-hidden shrink-0 relative">
                   {/* Using a placeholder for now, replace with real GCash QR in /assets/images/client_gcash_qr.png later */}
                   <img src="/assets/images/client_gcash_qr.png" alt="GCash QR Code" className="w-full h-full object-cover" onError={(e) => {
@@ -629,10 +638,13 @@ export function BookingSection() {
                   setProcessing(true);
 
                   try {
+                    // Generate a random Reference Number (e.g. G8-A1B2C3)
                     const ref = `G8-${Date.now().toString(36).toUpperCase().slice(-6)}`;
                     setBookingRef(ref);
 
-                    // 1. Upload receipt to Supabase Storage
+                    // ☁️ STEP A: UPLOAD THE GCASH PICTURE TO SUPABASE STORAGE
+                    // We must upload the file first so we can get its public URL, 
+                    // which we will then save to the database row.
                     const fileExt = receiptFile!.name.split('.').pop();
                     const fileName = `${ref}-${Math.random().toString(36).substring(2)}.${fileExt}`;
                     const { data: uploadData, error: uploadError } = await supabase.storage
@@ -646,7 +658,9 @@ export function BookingSection() {
                       .from('receipts')
                       .getPublicUrl(uploadData.path);
 
-                    // 2. Save booking to Supabase with 'pending' status
+                    // 💾 STEP B: SAVE THE BOOKING TO THE DATABASE
+                    // We loop through their selected rooms and create a new row in the "bookings" table for each room.
+                    // The 'pending' status means it will show up on the Admin Dashboard waiting for approval.
                     for (const sr of selectedRooms) {
                       const totalPrice = sr.room.price * sr.quantity * calculateNights();
                       await supabase.from('bookings').insert([{

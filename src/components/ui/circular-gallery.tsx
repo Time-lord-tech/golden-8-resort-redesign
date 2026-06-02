@@ -28,6 +28,21 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
     const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const animationFrameRef = useRef<number | null>(null);
     const lastScrollY = useRef(0);
+    const [cardSize, setCardSize] = useState({ w: 180, h: 260 });
+
+    // Responsive card sizing
+    useEffect(() => {
+      const updateSize = () => {
+        const w = window.innerWidth;
+        if (w < 480) setCardSize({ w: 120, h: 170 });
+        else if (w < 640) setCardSize({ w: 140, h: 200 });
+        else if (w < 768) setCardSize({ w: 160, h: 230 });
+        else setCardSize({ w: 180, h: 260 });
+      };
+      updateSize();
+      window.addEventListener('resize', updateSize);
+      return () => window.removeEventListener('resize', updateSize);
+    }, []);
 
     // Scroll-based rotation
     useEffect(() => {
@@ -108,8 +123,8 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
           style={{
             transform: `rotateY(${rotation}deg)`,
             transformStyle: 'preserve-3d',
-            width: '180px',
-            height: '260px',
+            width: `${cardSize.w}px`,
+            height: `${cardSize.h}px`,
             position: 'relative',
             pointerEvents: isDragging ? 'none' : 'auto', // Disable child interactions during drag to catch all move events
           }}
@@ -128,8 +143,8 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                 aria-label={item.common}
                 style={{
                   position: 'absolute',
-                  width: '180px',
-                  height: '260px',
+                  width: `${cardSize.w}px`,
+                  height: `${cardSize.h}px`,
                   top: 0,
                   left: 0,
                   transform: `rotateY(${itemAngle}deg) translateZ(${radius}px)`,
@@ -142,7 +157,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                     position: 'relative',
                     width: '100%',
                     height: '100%',
-                    borderRadius: '20px',
+                    borderRadius: '16px',
                     overflow: 'hidden',
                     boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
                     border: '2px solid rgba(255,255,255,0.1)',
@@ -169,12 +184,12 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                       bottom: 0,
                       left: 0,
                       right: 0,
-                      padding: '12px 16px',
+                      padding: '10px 12px',
                       background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)',
                       color: 'white',
                     }}
                   >
-                    <p style={{ fontSize: '12px', fontWeight: 600, margin: 0 }}>{item.common}</p>
+                    <p style={{ fontSize: '11px', fontWeight: 600, margin: 0 }}>{item.common}</p>
                   </div>
                 </div>
               </div>
