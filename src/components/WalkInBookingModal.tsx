@@ -39,6 +39,17 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
   const [paymentStatus, setPaymentStatus] = useState<'full' | 'deposit'>('full');
   const [customDeposit, setCustomDeposit] = useState('');
   const [gcashRef, setGcashRef] = useState('');
+  
+  // Card Details Fields
+  const [cardHolderName, setCardHolderName] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  
+  // Bank Transfer Fields
+  const [bankName, setBankName] = useState('');
+  const [bankRefNo, setBankRefNo] = useState('');
+
   const [bookingStatus, setBookingStatus] = useState<'checked_in' | 'reserved'>('checked_in');
 
   useEffect(() => {
@@ -59,9 +70,26 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
     setLoadingRooms(false);
   };
 
+  const selectedRoom = rooms.find(r => r.id === selectedRoomId);
+
+  // Auto-capping and adjustment of Room Quantity and Guests Count based on room limits
+  useEffect(() => {
+    if (selectedRoom) {
+      const maxQty = selectedRoom.available_rooms || 1;
+      if (roomQuantity > maxQty) {
+        setRoomQuantity(maxQty);
+      }
+      
+      const maxPax = parseInt(selectedRoom.pax.match(/\d+$/)?.[0] || selectedRoom.pax.match(/\d+/)?.[0] || '4');
+      const totalCapacity = maxPax * roomQuantity;
+      if (guestsCount > totalCapacity) {
+        setGuestsCount(totalCapacity);
+      }
+    }
+  }, [selectedRoomId, roomQuantity, selectedRoom]);
+
   if (!isOpen) return null;
 
-  const selectedRoom = rooms.find(r => r.id === selectedRoomId);
   const roomPrice = selectedRoom?.price || 0;
 
   const calculateNights = () => {
@@ -144,6 +172,12 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
       if (bookingError) throw bookingError;
 
       // 3. Create Payment record
+      const paymentRef = paymentMethod === 'gcash' 
+        ? gcashRef 
+        : (paymentMethod === 'card' 
+            ? `Cardholder: ${cardHolderName} | Card: **** **** **** ${cardNumber.slice(-4)}` 
+            : (paymentMethod === 'bank_transfer' ? `Bank: ${bankName.toUpperCase()} | Ref: ${bankRefNo}` : 'Direct Cash'));
+
       const { error: paymentError } = await supabase
         .from('payments')
         .insert([{
@@ -153,7 +187,7 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
           deposit_paid: dueNow,
           balance_due: balanceDue,
           payment_type: paymentMethod,
-          gcash_reference: paymentMethod === 'gcash' ? gcashRef : '',
+          gcash_reference: paymentRef,
           receipt_url: ''
         }]);
 
@@ -275,24 +309,43 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Quantity *</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                    Quantity * 
+                    <span className="text-[9px] text-[#FBBF24] ml-1">({selectedRoom?.available_rooms || 0} avail)</span>
+                  </label>
                   <input
                     type="number"
                     required
                     min="1"
+                    max={selectedRoom?.available_rooms || 1}
                     value={roomQuantity}
-                    onChange={e => setRoomQuantity(Math.max(1, Number(e.target.value)))}
+                    onChange={e => {
+                      const maxVal = selectedRoom?.available_rooms || 1;
+                      const val = Math.min(maxVal, Math.max(1, Number(e.target.value)));
+                      setRoomQuantity(val);
+                    }}
                     className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Guests Count *</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                    Guests Count *
+                    <span className="text-[9px] text-[#FBBF24] ml-1">
+                      (Max: {parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4') * roomQuantity} pax)
+                    </span>
+                  </label>
                   <input
                     type="number"
                     required
                     min="1"
+                    max={parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4') * roomQuantity}
                     value={guestsCount}
-                    onChange={e => setGuestsCount(Math.max(1, Number(e.target.value)))}
+                    onChange={e => {
+                      const maxPax = parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4');
+                      const maxCapacity = maxPax * roomQuantity;
+                      const val = Math.min(maxCapacity, Math.max(1, Number(e.target.value)));
+                      setGuestsCount(val);
+                    }}
                     className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
                   />
                 </div>
@@ -340,6 +393,100 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
                     className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm font-mono"
                     placeholder="13-digit transaction ref"
                   />
+                </div>
+              )}
+
+              {paymentMethod === 'card' && (
+                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#05101A] p-4 rounded-xl border border-[#1a365d] mt-2">
+                  <div className="md:col-span-3">
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Cardholder Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={cardHolderName}
+                      onChange={e => setCardHolderName(e.target.value.replace(/[^a-zA-Z\s]/g, ''))}
+                      className="w-full bg-[#0A2540] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                      placeholder="Juan Dela Cruz"
+                    />
+                  </div>
+                  <div className="md:col-span-3">
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Card Number *</label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={19}
+                      value={cardNumber}
+                      onChange={e => {
+                        const v = e.target.value.replace(/\D/g, '').match(/.{1,4}/g)?.join(' ') || '';
+                        setCardNumber(v);
+                      }}
+                      className="w-full bg-[#0A2540] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm font-mono"
+                      placeholder="1234 5678 1234 5678"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Expiry Date *</label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={5}
+                      value={cardExpiry}
+                      onChange={e => {
+                        let v = e.target.value.replace(/\D/g, '');
+                        if (v.length > 2) {
+                          v = v.slice(0, 2) + '/' + v.slice(2, 4);
+                        }
+                        setCardExpiry(v);
+                      }}
+                      className="w-full bg-[#0A2540] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm font-mono"
+                      placeholder="MM/YY"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">CVV *</label>
+                    <input
+                      type="password"
+                      required
+                      maxLength={3}
+                      value={cardCvv}
+                      onChange={e => setCardCvv(e.target.value.replace(/\D/g, ''))}
+                      className="w-full bg-[#0A2540] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm font-mono"
+                      placeholder="123"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'bank_transfer' && (
+                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#05101A] p-4 rounded-xl border border-[#1a365d] mt-2">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Bank Name *</label>
+                    <select
+                      value={bankName}
+                      required
+                      onChange={e => setBankName(e.target.value)}
+                      className="w-full bg-[#0A2540] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                    >
+                      <option value="">Select Bank</option>
+                      <option value="bdo">BDO Unibank</option>
+                      <option value="bpi">BPI (Bank of the Philippine Islands)</option>
+                      <option value="metrobank">Metrobank</option>
+                      <option value="landbank">Landbank</option>
+                      <option value="security_bank">Security Bank</option>
+                      <option value="unionbank">UnionBank</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Transaction Ref No. *</label>
+                    <input
+                      type="text"
+                      required
+                      value={bankRefNo}
+                      onChange={e => setBankRefNo(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
+                      className="w-full bg-[#0A2540] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm font-mono"
+                      placeholder="Bank Ref / Txn ID"
+                    />
+                  </div>
                 </div>
               )}
 
