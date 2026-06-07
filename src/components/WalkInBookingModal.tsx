@@ -118,6 +118,21 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedRoomId) return alert('Please select a room.');
+    
+    // Validate Payment Fields
+    if (paymentMethod === 'gcash' && (!gcashRef || gcashRef.length < 13)) {
+      return alert('Please enter a valid 13-digit GCash Reference Number.');
+    }
+    if (paymentMethod === 'card') {
+      if (!cardHolderName.trim()) return alert('Cardholder Name is required.');
+      if (cardNumber.replace(/\s/g, '').length < 16) return alert('Please enter a valid 16-digit Card Number.');
+      if (cardExpiry.length < 5) return alert('Please enter a valid Expiry Date (MM/YY).');
+      if (cardCvv.length < 3) return alert('Please enter a valid CVV.');
+    }
+    if (paymentMethod === 'bank_transfer' && (!bankName || !bankRefNo.trim())) {
+      return alert('Please select a bank and enter the Transaction Reference Number.');
+    }
+
     setSubmitting(true);
 
     try {
