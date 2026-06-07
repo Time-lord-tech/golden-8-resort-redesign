@@ -1,11 +1,13 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { supabase } from './lib/supabase';
 import { CheckCircle, XCircle, LogOut, ClipboardCheck, CalendarDays, BarChart2, BedDouble, Home, Smartphone, Image as ImageIcon, Bell, Users, Activity, ArrowUpRight, ArrowRight, Trash2, Edit2, Plus, Database } from 'lucide-react';
+import WalkInBookingModal from './components/WalkInBookingModal';
 
 export default function Admin() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeView, setActiveView] = useState('verifications');
+  const [showWalkInModal, setShowWalkInModal] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -40,6 +42,15 @@ export default function Admin() {
           <h1 className="text-xl font-bold tracking-wide text-white">Admin</h1>
         </div>
         
+        <div className="px-4 pt-4">
+          <button 
+            onClick={() => setShowWalkInModal(true)} 
+            className="w-full flex items-center justify-center px-4 py-3 rounded-xl text-sm font-bold bg-[#FBBF24] hover:bg-[#f59e0b] text-[#0A2540] transition-all gap-2 shadow-[0_0_15px_rgba(251,191,36,0.2)]"
+          >
+            <Plus className="w-4 h-4" /> Book Walk-In
+          </button>
+        </div>
+
         <nav className="flex-1 py-6 px-4 space-y-2">
           <button onClick={() => setActiveView('verifications')} className={`w-full flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all ${activeView === 'verifications' ? 'bg-gradient-to-r from-[#FBBF24]/10 to-transparent border-l-4 border-[#FBBF24] text-[#FBBF24]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}>
             <ClipboardCheck className={`w-5 h-5 mr-3 ${activeView === 'verifications' ? 'text-[#FBBF24]' : 'text-slate-400'}`} /> Verifications
@@ -93,6 +104,11 @@ export default function Admin() {
           {activeView === 'accommodations' && <AccommodationsView />}
         </div>
       </main>
+
+      <WalkInBookingModal 
+        isOpen={showWalkInModal} 
+        onClose={() => setShowWalkInModal(false)} 
+      />
     </div>
   );
 }

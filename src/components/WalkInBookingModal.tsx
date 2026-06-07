@@ -1,0 +1,445 @@
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { XCircle } from 'lucide-react';
+
+type Room = {
+  id: string;
+  title: string;
+  price: number;
+  available_rooms: number;
+  pax: string;
+};
+
+type WalkInBookingModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
+};
+
+export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkInBookingModalProps) {
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loadingRooms, setLoadingRooms] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Form Fields
+  const [guestName, setGuestName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [checkIn, setCheckIn] = useState(new Date().toISOString().split('T')[0]);
+  const [checkOut, setCheckOut] = useState(
+    new Date(Date.now() + 86400000).toISOString().split('T')[0]
+  );
+  const [selectedRoomId, setSelectedRoomId] = useState('');
+  const [roomQuantity, setRoomQuantity] = useState(1);
+  const [guestsCount, setGuestsCount] = useState(2);
+  const [specialRequests, setSpecialRequests] = useState('');
+  
+  // Payment Fields
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'gcash' | 'card' | 'bank_transfer'>('cash');
+  const [paymentStatus, setPaymentStatus] = useState<'full' | 'deposit'>('full');
+  const [customDeposit, setCustomDeposit] = useState('');
+  const [gcashRef, setGcashRef] = useState('');
+  const [bookingStatus, setBookingStatus] = useState<'checked_in' | 'reserved'>('checked_in');
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchRooms();
+    }
+  }, [isOpen]);
+
+  const fetchRooms = async () => {
+    setLoadingRooms(true);
+    const { data, error } = await supabase
+      .from('rooms')
+      .select('id, title, price, available_rooms, pax');
+    if (!error && data) {
+      setRooms(data);
+      if (data.length > 0) setSelectedRoomId(data[0].id);
+    }
+    setLoadingRooms(false);
+  };
+
+  if (!isOpen) return null;
+
+  const selectedRoom = rooms.find(r => r.id === selectedRoomId);
+  const roomPrice = selectedRoom?.price || 0;
+
+  const calculateNights = () => {
+    if (!checkIn || !checkOut) return 1;
+    const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
+    return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  };
+
+  const nights = calculateNights();
+  const totalPrice = roomPrice * roomQuantity * nights;
+
+  // Calculate default deposit or balance
+  const dueNow = paymentStatus === 'full' ? totalPrice : (customDeposit ? Number(customDeposit) : totalPrice / 2);
+  const balanceDue = totalPrice - dueNow;
+
+  const handleNameChange = (val: string) => {
+    const sanitized = val.replace(/[^a-zA-ZÀ-ÿ\s\-'.]/g, '');
+    setGuestName(sanitized);
+  };
+
+  const handlePhoneChange = (val: string) => {
+    const sanitized = val.replace(/[^0-9+\-() ]/g, '');
+    setPhone(sanitized);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedRoomId) return alert('Please select a room.');
+    setSubmitting(true);
+
+    try {
+      // 1. Create/Verify Guest
+      let guestId = '';
+      const guestEmail = email.trim() || `walkin-${Date.now()}@golden8resort.com`;
+      
+      const { data: existingGuest, error: guestFetchError } = await supabase
+        .from('guests')
+        .select('id')
+        .eq('email', guestEmail)
+        .maybeSingle();
+
+      if (guestFetchError) throw guestFetchError;
+
+      if (existingGuest) {
+        guestId = existingGuest.id;
+      } else {
+        const newGuestId = crypto.randomUUID();
+        const { error: guestInsertError } = await supabase
+          .from('guests')
+          .insert([{
+            id: newGuestId,
+            name: guestName.trim(),
+            email: guestEmail,
+            phone: phone.trim()
+          }]);
+        if (guestInsertError) throw guestInsertError;
+        guestId = newGuestId;
+      }
+
+      // 2. Create Booking
+      const bookingId = crypto.randomUUID();
+      const ref = `G8-WI-${Date.now().toString(36).toUpperCase().slice(-5)}`;
+
+      const { error: bookingError } = await supabase
+        .from('bookings')
+        .insert([{
+          id: bookingId,
+          guest_id: guestId,
+          room_id: selectedRoomId,
+          check_in: checkIn,
+          check_out: checkOut,
+          guests_count: guestsCount,
+          status: bookingStatus,
+          reference_number: ref,
+          booking_ref: ref,
+          special_requests: specialRequests,
+          room_quantity: roomQuantity
+        }]);
+
+      if (bookingError) throw bookingError;
+
+      // 3. Create Payment record
+      const { error: paymentError } = await supabase
+        .from('payments')
+        .insert([{
+          id: crypto.randomUUID(),
+          booking_id: bookingId,
+          total_amount: totalPrice,
+          deposit_paid: dueNow,
+          balance_due: balanceDue,
+          payment_type: paymentMethod,
+          gcash_reference: paymentMethod === 'gcash' ? gcashRef : '',
+          receipt_url: ''
+        }]);
+
+      if (paymentError) throw paymentError;
+
+      alert(`Success! Walk-In booking created. Reference: ${ref}`);
+      onClose();
+      if (onSuccess) onSuccess();
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message || 'Failed to create walk-in booking.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/75 backdrop-blur-sm" onClick={onClose}></div>
+
+      <div className="relative bg-[#0A2540] border border-[#1a365d] rounded-3xl w-full max-w-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-10 animate-[fadeIn_0.3s_ease_forwards]">
+        {/* Header */}
+        <div className="px-6 py-4 bg-[#05101A] border-b border-[#1a365d] flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <span className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-ping"></span>
+              New Walk-In Booking
+            </h3>
+            <p className="text-slate-400 text-xs mt-0.5">Directly register and check-in guests at the front desk</p>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+            <XCircle size={24} />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+          
+          {/* Guest Information Section */}
+          <div className="bg-[#05101A]/50 p-5 rounded-2xl border border-[#1a365d] space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#FBBF24]">1. Guest details</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={guestName}
+                  onChange={e => handleNameChange(e.target.value)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm transition-all"
+                  placeholder="Juan Dela Cruz"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Phone Number</label>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={e => handlePhoneChange(e.target.value)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm transition-all"
+                  placeholder="09123456789"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm transition-all"
+                  placeholder="juan@example.com (optional)"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Stay & Room Details Section */}
+          <div className="bg-[#05101A]/50 p-5 rounded-2xl border border-[#1a365d] space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#FBBF24]">2. Booking & Room details</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-in Date *</label>
+                <input
+                  type="date"
+                  required
+                  value={checkIn}
+                  onChange={e => setCheckIn(e.target.value)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm [color-scheme:dark]"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-out Date *</label>
+                <input
+                  type="date"
+                  required
+                  value={checkOut}
+                  min={checkIn}
+                  onChange={e => setCheckOut(e.target.value)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm [color-scheme:dark]"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Select Room Type *</label>
+                {loadingRooms ? (
+                  <div className="text-slate-400 text-xs animate-pulse py-2">Loading rooms...</div>
+                ) : (
+                  <select
+                    value={selectedRoomId}
+                    onChange={e => setSelectedRoomId(e.target.value)}
+                    className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                  >
+                    {rooms.map(r => (
+                      <option key={r.id} value={r.id}>
+                        {r.title} (₱{r.price.toLocaleString()}/night)
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Quantity *</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={roomQuantity}
+                    onChange={e => setRoomQuantity(Math.max(1, Number(e.target.value)))}
+                    className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Guests Count *</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={guestsCount}
+                    onChange={e => setGuestsCount(Math.max(1, Number(e.target.value)))}
+                    className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                  />
+                </div>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Special Requests / Notes</label>
+                <textarea
+                  value={specialRequests}
+                  onChange={e => setSpecialRequests(e.target.value)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm resize-none"
+                  rows={2}
+                  placeholder="E.g., early check-in, extra blanket, pool view request..."
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Details Section */}
+          <div className="bg-[#05101A]/50 p-5 rounded-2xl border border-[#1a365d] space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#FBBF24]">3. Billing & Payment details</h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Payment Method</label>
+                <select
+                  value={paymentMethod}
+                  onChange={e => setPaymentMethod(e.target.value as any)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                >
+                  <option value="cash">Cash</option>
+                  <option value="gcash">GCash</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="card">Credit / Debit Card</option>
+                </select>
+              </div>
+
+              {paymentMethod === 'gcash' && (
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">GCash Reference No.</label>
+                  <input
+                    type="text"
+                    maxLength={13}
+                    value={gcashRef}
+                    onChange={e => setGcashRef(e.target.value.replace(/\D/g, ''))}
+                    className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm font-mono"
+                    placeholder="13-digit transaction ref"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Payment Preference</label>
+                <select
+                  value={paymentStatus}
+                  onChange={e => setPaymentStatus(e.target.value as any)}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                >
+                  <option value="full">Paid In Full</option>
+                  <option value="deposit">Deposit / Partial Payment</option>
+                </select>
+              </div>
+
+              {paymentStatus === 'deposit' && (
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Custom Deposit Amount (₱)</label>
+                  <input
+                    type="number"
+                    value={customDeposit}
+                    onChange={e => setCustomDeposit(e.target.value)}
+                    className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                    placeholder={`Default: ₱${(totalPrice / 2).toLocaleString()}`}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="bg-[#05101A] p-4 rounded-xl border border-[#1a365d] mt-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Rate per night:</span>
+                <span className="text-white font-medium">₱{roomPrice.toLocaleString()} × {roomQuantity} room(s)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Total duration:</span>
+                <span className="text-white font-medium">{nights} night(s)</span>
+              </div>
+              <div className="h-px bg-[#1a365d]/50 my-1"></div>
+              <div className="flex justify-between text-base">
+                <span className="font-bold text-white">Grand Total:</span>
+                <span className="font-bold text-white">₱{totalPrice.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-[#FBBF24] font-bold">Collected Now:</span>
+                <span className="text-[#FBBF24] font-bold">₱{dueNow.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-xs text-red-400">
+                <span>Collect at Check-Out:</span>
+                <span>₱{balanceDue.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Booking Status Section */}
+          <div className="bg-[#05101A]/50 p-5 rounded-2xl border border-[#1a365d] flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-[#FBBF24] mb-1">4. Reservation action</h4>
+              <p className="text-slate-400 text-xs">Choose whether the guest is physically arriving right now or checking in later</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setBookingStatus('checked_in')}
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${
+                  bookingStatus === 'checked_in'
+                    ? 'bg-blue-500 border-blue-600 text-white'
+                    : 'bg-[#05101A] border-[#1a365d] text-slate-400 hover:text-white'
+                }`}
+              >
+                Check In Immediately
+              </button>
+              <button
+                type="button"
+                onClick={() => setBookingStatus('reserved')}
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${
+                  bookingStatus === 'reserved'
+                    ? 'bg-emerald-500 border-emerald-600 text-white'
+                    : 'bg-[#05101A] border-[#1a365d] text-slate-400 hover:text-white'
+                }`}
+              >
+                Save as Reserved
+              </button>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full bg-[#FBBF24] hover:bg-[#f59e0b] text-[#0A2540] font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2"
+          >
+            {submitting ? (
+              <div className="w-5 h-5 border-2 border-[#0A2540]/30 border-t-[#0A2540] rounded-full animate-spin"></div>
+            ) : (
+              'Confirm Front-Desk Booking'
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
