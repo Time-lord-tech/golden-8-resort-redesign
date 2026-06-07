@@ -66,7 +66,9 @@ export function BookingSection() {
 
   useEffect(() => {
     fetchRooms();
+  }, [checkIn, checkOut]);
 
+  useEffect(() => {
     const handleRoomSelect = (e: any) => {
       if (e.detail?.id) {
         const room = e.detail as Room;
@@ -82,12 +84,70 @@ export function BookingSection() {
     return () => window.removeEventListener('select-room', handleRoomSelect);
   }, []);
 
-  // 📥 FETCH ROOMS FROM DATABASE
-  // When the component loads, it asks Supabase for all rooms, sorted by price.
+  // 📥 FETCH ROOMS FROM DATABASE (Dynamic Availability)
   const fetchRooms = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('rooms').select('*').order('price', { ascending: true });
-    if (!error && data) setRooms(data);
+    // 1. Fetch rooms
+    const { data: roomData, error: roomError } = await supabase
+      .from('rooms')
+      .select('*')
+      .order('price', { ascending: true });
+      
+    if (roomError || !roomData) {
+      setLoading(false);
+      return;
+    }
+
+    // 2. Fetch overlapping active bookings
+    const { data: bookingData, error: bookingError } = await supabase
+      .from('bookings')
+      .select('room_id, check_in, check_out, room_quantity')
+      .neq('status', 'cancelled');
+
+    let calculatedRooms = roomData.map((room: any) => {
+      const totalRooms = room.total_rooms || 10;
+      
+      if (!checkIn || !checkOut || bookingError || !bookingData) {
+        return {
+          ...room,
+          available_rooms: totalRooms
+        };
+      }
+
+      // Generate date array for checkout range
+      const targetStart = new Date(checkIn);
+      const targetEnd = new Date(checkOut);
+      const targetNights = Math.max(1, Math.ceil((targetEnd.getTime() - targetStart.getTime()) / (1000 * 60 * 60 * 24)));
+      
+      let maxBooked = 0;
+      for (let i = 0; i < targetNights; i++) {
+        const currentDay = new Date(targetStart);
+        currentDay.setDate(currentDay.getDate() + i);
+        const currentTime = currentDay.getTime();
+
+        // Count rooms booked on this day
+        let bookedOnDay = 0;
+        bookingData.forEach((b: any) => {
+          if (b.room_id !== room.id) return;
+          const bStart = new Date(b.check_in).getTime();
+          const bEnd = new Date(b.check_out).getTime();
+          if (bStart <= currentTime && bEnd > currentTime) {
+            bookedOnDay += b.room_quantity || 1;
+          }
+        });
+        if (bookedOnDay > maxBooked) {
+          maxBooked = bookedOnDay;
+        }
+      }
+
+      const available = Math.max(0, totalRooms - maxBooked);
+      return {
+        ...room,
+        available_rooms: available
+      };
+    });
+
+    setRooms(calculatedRooms);
     setLoading(false);
   };
 

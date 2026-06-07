@@ -56,16 +56,80 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
     if (isOpen) {
       fetchRooms();
     }
-  }, [isOpen]);
+  }, [isOpen, checkIn, checkOut]);
 
   const fetchRooms = async () => {
     setLoadingRooms(true);
-    const { data, error } = await supabase
+    // 1. Fetch rooms
+    const { data: roomData, error: roomError } = await supabase
       .from('rooms')
-      .select('id, title, price, available_rooms, pax');
-    if (!error && data) {
-      setRooms(data);
-      if (data.length > 0) setSelectedRoomId(data[0].id);
+      .select('id, title, price, total_rooms, pax')
+      .order('price', { ascending: true });
+      
+    if (roomError || !roomData) {
+      setLoadingRooms(false);
+      return;
+    }
+
+    // 2. Fetch overlapping active bookings
+    const { data: bookingData, error: bookingError } = await supabase
+      .from('bookings')
+      .select('room_id, check_in, check_out, room_quantity')
+      .neq('status', 'cancelled');
+
+    let calculatedRooms = roomData.map((room: any) => {
+      const totalRooms = room.total_rooms || 10;
+      
+      if (!checkIn || !checkOut || bookingError || !bookingData) {
+        return {
+          id: room.id,
+          title: room.title,
+          price: room.price,
+          available_rooms: totalRooms,
+          pax: room.pax
+        };
+      }
+
+      // Generate date array for checkout range
+      const targetStart = new Date(checkIn);
+      const targetEnd = new Date(checkOut);
+      const targetNights = Math.max(1, Math.ceil((targetEnd.getTime() - targetStart.getTime()) / (1000 * 60 * 60 * 24)));
+      
+      let maxBooked = 0;
+      for (let i = 0; i < targetNights; i++) {
+        const currentDay = new Date(targetStart);
+        currentDay.setDate(currentDay.getDate() + i);
+        const currentTime = currentDay.getTime();
+
+        // Count rooms booked on this day
+        let bookedOnDay = 0;
+        bookingData.forEach((b: any) => {
+          if (b.room_id !== room.id) return;
+          const bStart = new Date(b.check_in).getTime();
+          const bEnd = new Date(b.check_out).getTime();
+          if (bStart <= currentTime && bEnd > currentTime) {
+            bookedOnDay += b.room_quantity || 1;
+          }
+        });
+        if (bookedOnDay > maxBooked) {
+          maxBooked = bookedOnDay;
+        }
+      }
+
+      const available = Math.max(0, totalRooms - maxBooked);
+      return {
+        id: room.id,
+        title: room.title,
+        price: room.price,
+        available_rooms: available,
+        pax: room.pax
+      };
+    });
+
+    setRooms(calculatedRooms);
+    if (calculatedRooms.length > 0) {
+      const exists = calculatedRooms.find(r => r.id === selectedRoomId);
+      if (!exists) setSelectedRoomId(calculatedRooms[0].id);
     }
     setLoadingRooms(false);
   };
