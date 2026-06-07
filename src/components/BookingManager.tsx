@@ -658,31 +658,73 @@ export function BookingSection() {
                       .from('receipts')
                       .getPublicUrl(uploadData.path);
 
-                    // 💾 STEP B: SAVE THE BOOKING TO THE DATABASE
-                    // We loop through their selected rooms and create a new row in the "bookings" table for each room.
-                    // The 'pending' status means it will show up on the Admin Dashboard waiting for approval.
+                    // 💾 STEP B: SAVE THE BOOKING TO THE DATABASE (3NF)
+                    // 1. Check if guest already exists by email, otherwise create new guest
+                    let guestId = '';
+                    const { data: existingGuest, error: guestFetchError } = await supabase
+                      .from('guests')
+                      .select('id')
+                      .eq('email', email)
+                      .maybeSingle();
+
+                    if (guestFetchError) throw new Error('Failed to verify guest details.');
+
+                    if (existingGuest) {
+                      guestId = existingGuest.id;
+                    } else {
+                      const newGuestId = crypto.randomUUID();
+                      const { error: guestInsertError } = await supabase
+                        .from('guests')
+                        .insert([{
+                          id: newGuestId,
+                          name: guestName,
+                          email: email,
+                          phone: phone
+                        }]);
+
+                      if (guestInsertError) throw new Error('Failed to register guest details.');
+                      guestId = newGuestId;
+                    }
+
+                    // 2. Loop through selected rooms and create bookings & payments
                     for (const sr of selectedRooms) {
+                      const bookingId = crypto.randomUUID();
                       const totalPrice = sr.room.price * sr.quantity * calculateNights();
-                      await supabase.from('bookings').insert([{
-                        room_id: sr.room.id,
-                        guest_name: guestName,
-                        email,
-                        phone,
-                        check_in: checkIn,
-                        check_out: checkOut,
-                        guests_count: totalGuests,
-                        total_price: totalPrice,
-                        deposit_paid: paymentType === 'deposit' ? totalPrice / 2 : totalPrice,
-                        balance_due: paymentType === 'deposit' ? totalPrice / 2 : 0,
-                        status: 'pending',
-                        reference_number: ref,
-                        booking_ref: ref,
-                        special_requests: specialRequests,
-                        room_quantity: sr.quantity,
-                        payment_type: paymentType,
-                        gcash_reference: gcashRef,
-                        receipt_url: publicUrl
-                      }]);
+
+                      // Insert Booking
+                      const { error: bookingError } = await supabase
+                        .from('bookings')
+                        .insert([{
+                          id: bookingId,
+                          guest_id: guestId,
+                          room_id: sr.room.id,
+                          check_in: checkIn,
+                          check_out: checkOut,
+                          guests_count: totalGuests,
+                          status: 'pending',
+                          reference_number: ref,
+                          booking_ref: ref,
+                          special_requests: specialRequests,
+                          room_quantity: sr.quantity
+                        }]);
+
+                      if (bookingError) throw new Error('Failed to create booking.');
+
+                      // Insert Payment
+                      const { error: paymentError } = await supabase
+                        .from('payments')
+                        .insert([{
+                          id: crypto.randomUUID(),
+                          booking_id: bookingId,
+                          total_amount: totalPrice,
+                          deposit_paid: paymentType === 'deposit' ? totalPrice / 2 : totalPrice,
+                          balance_due: paymentType === 'deposit' ? totalPrice / 2 : 0,
+                          payment_type: paymentType,
+                          gcash_reference: gcashRef,
+                          receipt_url: publicUrl
+                        }]);
+
+                      if (paymentError) throw new Error('Failed to record payment.');
                     }
 
                     goToStep(4);
