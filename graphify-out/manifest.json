@@ -1,0 +1,437 @@
+{
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\eslint.config.js": {
+    "mtime": 1774078512.1713605,
+    "ast_hash": "b8893da386a89dfd3672dad848f4ec7e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\package.json": {
+    "mtime": 1774764865.5052514,
+    "ast_hash": "7e85417cd1aede61f0b827518618db0e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\postcss.config.js": {
+    "mtime": 1774181860.4019816,
+    "ast_hash": "6b5c4cb81230b2fed05f0216b775c0f5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\tsconfig.app.json": {
+    "mtime": 1774078512.1965868,
+    "ast_hash": "1079e34c0d979ff4e9c96e544b296d8f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\tsconfig.json": {
+    "mtime": 1774078512.1998575,
+    "ast_hash": "a3d39fa780ebff65444de257f291ce6c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\tsconfig.node.json": {
+    "mtime": 1774078512.2043126,
+    "ast_hash": "eec85c9d7c6b599801557f1afd86672c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\vercel.json": {
+    "mtime": 1775365750.5286632,
+    "ast_hash": "2e154cc57ea1ad4eb2e82aec029594f0",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\vite.config.ts": {
+    "mtime": 1774078512.3997293,
+    "ast_hash": "88439104b3c207f17d33ef3160e3b080",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\Admin.tsx": {
+    "mtime": 1780852749.4733891,
+    "ast_hash": "ae214bcfda0687bddcd957e0d0aed827",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\App.tsx": {
+    "mtime": 1780852754.2692688,
+    "ast_hash": "9cd6db2b7a9d91f930cde030bf1da14c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\main.tsx": {
+    "mtime": 1774764925.8054311,
+    "ast_hash": "548573b4ef6cb2dd1dd45b27afc1bef1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\BookingManager.tsx": {
+    "mtime": 1780851777.2499735,
+    "ast_hash": "d1654463bf7f53699b2feb92c9046e21",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\ui\\circular-gallery.tsx": {
+    "mtime": 1777339971.606479,
+    "ast_hash": "5f431ee35d66b5d7d45897ec13d1dd37",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\lib\\supabase.ts": {
+    "mtime": 1774746845.6588697,
+    "ast_hash": "0f0d650b58a32e42853f7fe3ab7df7b1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\index.html": {
+    "mtime": 1780394013.1869113,
+    "ast_hash": "c4f4e64c19067b43ed7ec44be879b00d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\.agent\\workflows\\lead-generation-enrichment.md": {
+    "mtime": 1779528277.4145286,
+    "ast_hash": "52b5549802cec063030ea1dad43e0c78",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\.agents\\workflows\\lead-generation-enrichment.md": {
+    "mtime": 1779528277.4145286,
+    "ast_hash": "52b5549802cec063030ea1dad43e0c78",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\.gemini\\workflows\\lead-generation-enrichment.md": {
+    "mtime": 1779528277.4145286,
+    "ast_hash": "52b5549802cec063030ea1dad43e0c78",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\robots.txt": {
+    "mtime": 1780394023.2764742,
+    "ast_hash": "e301deabd01935ac8fc4d9e552d1cdcd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\favicon.svg": {
+    "mtime": 1774078512.3409019,
+    "ast_hash": "7e840862161341271697daa99a40d76b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\icons.svg": {
+    "mtime": 1774078512.3564737,
+    "ast_hash": "3b4fcfcf393eca4d264dca4a4663bc37",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\137b10b5-e357-4d34-99e5-f41b1e482a3c.jpg": {
+    "mtime": 1774172799.822967,
+    "ast_hash": "c1eeb4e0d3f105df27b2da560f78ea21",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\2a91de7d-7842-4ce3-aee9-d24abddb9681.jpg": {
+    "mtime": 1774172810.686718,
+    "ast_hash": "05166abfb28405c70b17d0c074080f62",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\4b42ed90-bcd8-421a-95c7-4dff5f0fc807.jpg": {
+    "mtime": 1774172796.834797,
+    "ast_hash": "cc0295f61675e68765d0abfc627187fd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\5bb331bc-8d34-4ad3-80be-5591b43ff4f4.jpg": {
+    "mtime": 1774172798.307288,
+    "ast_hash": "8ac29a2360114e27b27f6c154a17bb1e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\7b5aae7c-53c3-423a-a8a9-2cc915d074ba.jpg": {
+    "mtime": 1774172816.4847987,
+    "ast_hash": "b7a48a9d662f3e0bd2a674741fd98a78",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\84ab8a76-91b1-4992-954f-d99047bb6a8f.jpg": {
+    "mtime": 1774172820.1526299,
+    "ast_hash": "0df17c672a15dfcef4a819f3ce476a8a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\8e38018f-0406-4a4d-8141-8a54f51e1bda.jpg": {
+    "mtime": 1774172814.4193394,
+    "ast_hash": "96680e2e9d7d4e3f60a420b64a8940fc",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\8fcc437e-70dc-49c6-a017-1455ce551536.jpg": {
+    "mtime": 1774172819.298658,
+    "ast_hash": "50d33e04e65235429f93f45928e426df",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\a4c91579-d589-489d-9968-1606a80913c1.jpg": {
+    "mtime": 1774172818.5521846,
+    "ast_hash": "efb939ed161cfab2295e2f4706b1c2c4",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\ade0ac1b-116d-4a14-93e6-ad14d5662c12.jpg": {
+    "mtime": 1774172815.4587877,
+    "ast_hash": "8a7fb5500c0df5fd46f6d77287c93310",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\dacf8509-3080-43eb-b543-ed979a7c0391.jpg": {
+    "mtime": 1774172821.047601,
+    "ast_hash": "9adcda31362b6f346dade3a1f1a1a662",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\dc211f6b-69a3-4fca-9fb7-703fb73faa53.jpg": {
+    "mtime": 1774172817.3757133,
+    "ast_hash": "927ed2b10488f29a06ef2168209b666b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\logo.jpg": {
+    "mtime": 1774172722.291964,
+    "ast_hash": "f7e191aaaa7f067a74e2ae2b0185f986",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\0ac705f2-eae2-4e3a-8cee-671d4ecd3289.jpg": {
+    "mtime": 1774185168.9850564,
+    "ast_hash": "d25504d6f1b9c0fc359eb48e2e8c3f7f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\17cc0cfc-89ef-44d0-8ec4-0c0732f25096.jpg": {
+    "mtime": 1774185161.5796876,
+    "ast_hash": "58a6d6caf1cffd5fee6496acce613fcd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\206b909a-e2fc-4ae6-a7a3-da83df5ea961.jpg": {
+    "mtime": 1774185154.424762,
+    "ast_hash": "7f9021c2d4a769ec23bac90ed7f265d1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\364161d6-eea5-4295-a900-228b8a7b88e7.jpg": {
+    "mtime": 1774185171.1285727,
+    "ast_hash": "dd15d25f8924254ce2992f76ad25f7a5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\4bec0757-9b05-4d39-954a-5a443fb74ef4.jpg": {
+    "mtime": 1774185155.6739645,
+    "ast_hash": "e7ac2d00a0627ad9cdb6c97e182b451b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\52a60014-00da-46c9-8a9e-0af4cb3a8e8c.jpg": {
+    "mtime": 1774185141.9492974,
+    "ast_hash": "1776a388906a784ac329a4ab46c6ab23",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\5d6ad537-04c8-4074-9a50-d588b1b9c34a.jpg": {
+    "mtime": 1774185175.5892923,
+    "ast_hash": "373c28cb3f49f66c2aa4db5ae1cefda3",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\62cb6f6f-ebe3-4bfc-a196-1bfdfa7e6e46.jpg": {
+    "mtime": 1774185150.7247717,
+    "ast_hash": "a1701374dff44d0974fba601abae7177",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\72a86148-58aa-4b77-a436-18bca7c7e690.jpg": {
+    "mtime": 1774185163.7112708,
+    "ast_hash": "41c218146874a6983f3e9f2bb139f291",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\72d8b899-bca0-4b95-96eb-1073489b0f10.jpg": {
+    "mtime": 1774185166.9321911,
+    "ast_hash": "7cf0ef4f47b376dc7f7039bbd8cfdc74",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\94fd148f-5d4f-4d2b-9359-adf9fdf2f35a.jpg": {
+    "mtime": 1774185170.0394053,
+    "ast_hash": "ffd248c091a722dd6a47c9e140fd2c6b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\9cfcbca1-a910-4227-8452-c9bc4ac18a68.jpg": {
+    "mtime": 1774185165.8985202,
+    "ast_hash": "4f518b70fd7e939eeefb5cd93a5159fe",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\9ef3b794-6848-4f90-95d7-7cf94baa3b54.jpg": {
+    "mtime": 1774185156.8786848,
+    "ast_hash": "bfa1324d8c3b886115a61cd35d3e702a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\aba07167-6523-4229-90ec-badfd0d37f36 (1).jpg": {
+    "mtime": 1774185149.0996356,
+    "ast_hash": "abec2ef2a45e695fae23639652aa036a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\aba07167-6523-4229-90ec-badfd0d37f36.jpg": {
+    "mtime": 1774185144.1275463,
+    "ast_hash": "abec2ef2a45e695fae23639652aa036a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\aca3c4e6-1e03-45db-93c2-df491068cfbb.jpg": {
+    "mtime": 1774185173.2989144,
+    "ast_hash": "b065f4d3d26babcdf7969a932fd01dc5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\b42a1a82-e600-44c5-b57b-18febe2d3323.jpg": {
+    "mtime": 1774185142.9446373,
+    "ast_hash": "4c2ea2e11c24ef2fb08b734583cbf791",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\b73d3cc4-2145-45e0-834b-341f56cd2c5e.jpg": {
+    "mtime": 1774185164.7166958,
+    "ast_hash": "fb5d0efc8e4ee3bbd2a4835faad96920",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\c4735116-aec5-4edc-aae4-43150742d332.jpg": {
+    "mtime": 1774185153.189072,
+    "ast_hash": "7457e07b809f0d5c2c1075ec9fc4a361",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\e0396716-9d48-47b5-8125-465f29a8f475.jpg": {
+    "mtime": 1774185172.130647,
+    "ast_hash": "c5fa6f0141da7e8ecd697e65311d0c53",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\e1beada5-baa7-4634-a09e-23ce26a0caac.jpg": {
+    "mtime": 1774185174.5295343,
+    "ast_hash": "ebc75f275c4fbe8bba3bda677768afcf",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\e917c70b-18ae-44cd-8c02-6d4270674067.jpg": {
+    "mtime": 1774185158.056818,
+    "ast_hash": "f023d5a7fbfc3bc02fac4b7355ada7bd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\ed03735a-450f-4cf9-a9ee-5cb87adfff68.jpg": {
+    "mtime": 1774185151.9545248,
+    "ast_hash": "af6fd696ba3fc9a5e8afec1926e5ec28",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\fb197fa9-26fa-4f1e-ad69-69c3712772c6.jpg": {
+    "mtime": 1774185162.6457498,
+    "ast_hash": "4cfdac1ef9631217283d5570ebf0d28a",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\ff567965-9d68-42c6-89b4-9968c4556cfb.jpg": {
+    "mtime": 1774185167.9669392,
+    "ast_hash": "a991718987a2d9b451ea370559308b74",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\images\\client_gcash_qr.png": {
+    "mtime": 1774764496.6721375,
+    "ast_hash": "5cdbbfcfc0b5f86a33f21dbfc2a2852b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\price and amenities\\539050559_122196436322319417_6246999410135991756_n.jpg": {
+    "mtime": 1774174448.8447387,
+    "ast_hash": "f6b6e5c89f8110f22869180addb00271",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\price and amenities\\539813341_122196436346319417_8142288977686253430_n.jpg": {
+    "mtime": 1774174460.0478542,
+    "ast_hash": "c5ae61d99d6504140fe876eb528806f8",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\price and amenities\\540213641_122196436424319417_5305088581032260268_n.jpg": {
+    "mtime": 1774174464.8807008,
+    "ast_hash": "e93412bddfbd252deb58a6d02fb775ef",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\assets\\hero.png": {
+    "mtime": 1774078512.2758276,
+    "ast_hash": "5cf2b0762834cdddc0dd3ec1397b5011",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\assets\\react.svg": {
+    "mtime": 1774078512.3698688,
+    "ast_hash": "f0402b67b6ce880f65666bb49e841696",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\assets\\vite.svg": {
+    "mtime": 1774078512.3816166,
+    "ast_hash": "9960a24288958394ac50e57ff638b036",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\hero-video.mp4": {
+    "mtime": 1777345340.2722392,
+    "ast_hash": "af6b428c1bba0777a95d80696abbaf4b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\0210f7df-5c9b-4680-a9d1-e59cbbfe99ba.mp4": {
+    "mtime": 1774185160.333063,
+    "ast_hash": "e2f80a04e25f526602034263ff34aced",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\public\\assets\\carosel\\74c8c0b0-726f-46b2-9347-1ad8a1005dac.mp4": {
+    "mtime": 1774185159.2449095,
+    "ast_hash": "f55bd6390ab4a03a9469b2bf916b98f5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\WalkInBookingModal.tsx": {
+    "mtime": 1780854864.9304986,
+    "ast_hash": "eac8c2b5ecd945f60fd586c33372d5d0",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\admin\\AccommodationsView.tsx": {
+    "mtime": 1780852716.9983213,
+    "ast_hash": "8f2059b408b6fd34f78c76053255997e",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\admin\\AdminLogin.tsx": {
+    "mtime": 1780852668.7116842,
+    "ast_hash": "080e7ea800a4b37a97ec9b967afaba34",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\admin\\AnalyticsView.tsx": {
+    "mtime": 1780852762.4747066,
+    "ast_hash": "e0beb2d40d2bb475a4b964a50c449f6c",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\admin\\TapeChartView.tsx": {
+    "mtime": 1780854688.6090329,
+    "ast_hash": "e76bd8589cb60b74870ae9bf7998f5af",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\admin\\VerificationsView.tsx": {
+    "mtime": 1780852777.9299357,
+    "ast_hash": "7b7ddb8e4f8b47ff7d12a992aeb6b448",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\About.tsx": {
+    "mtime": 1780852783.5288887,
+    "ast_hash": "4743cb6c8747304f36b3773429d3a687",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Contact.tsx": {
+    "mtime": 1780852789.1122236,
+    "ast_hash": "e9b3811f5e2db6898b67c00226dbc3b0",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Footer.tsx": {
+    "mtime": 1780852798.1938746,
+    "ast_hash": "3980d8821e89e9a5637464e642e79dc9",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\GuestGallery.tsx": {
+    "mtime": 1780852892.4020443,
+    "ast_hash": "b93359905e3ef3608bec5161086cb376",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Hero.tsx": {
+    "mtime": 1780852901.5913627,
+    "ast_hash": "8832ea7e18b3a1ddd8fcba8747f309f4",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Marquee.tsx": {
+    "mtime": 1780852911.1143415,
+    "ast_hash": "9a45fe6f48741c856241744b311f7813",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Navbar.tsx": {
+    "mtime": 1780852516.4584396,
+    "ast_hash": "c97430166b4f99b61c84b5e2a7611ddd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Reviews.tsx": {
+    "mtime": 1780852921.17427,
+    "ast_hash": "51b3ad7fbfef6d9ced997c92c99feea6",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Rooms.tsx": {
+    "mtime": 1780852929.1528444,
+    "ast_hash": "39abfe4ab0deda7fc44dfe84002f5d87",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\Stats.tsx": {
+    "mtime": 1780852934.703001,
+    "ast_hash": "268b1bc7d4c586bf17bfe5e748fc8f0f",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\components\\sections\\StickyScroll.tsx": {
+    "mtime": 1780852945.9825919,
+    "ast_hash": "d5761ff7c1182ce3bb6c52ca68662dba",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\Admin\\Documents\\WebProjects\\golden-8-resort\\src\\data\\resortData.ts": {
+    "mtime": 1780852504.8248649,
+    "ast_hash": "6c3e1895bb38be68ddb0b97d387befa3",
+    "semantic_hash": ""
+  }
+}

@@ -7,6 +7,7 @@ type Room = {
   title: string;
   price: number;
   available_rooms: number;
+  total_rooms: number;
   pax: string;
 };
 
@@ -31,6 +32,7 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
   );
   const [selectedRoomId, setSelectedRoomId] = useState('');
   const [roomQuantity, setRoomQuantity] = useState(1);
+  const [roomNumber, setRoomNumber] = useState<string>('auto');
   const [guestsCount, setGuestsCount] = useState(2);
   const [specialRequests, setSpecialRequests] = useState('');
   
@@ -51,12 +53,18 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
   const [bankRefNo, setBankRefNo] = useState('');
 
   const [bookingStatus, setBookingStatus] = useState<'checked_in' | 'reserved'>('checked_in');
+  const [allBookings, setAllBookings] = useState<any[]>([]);
 
   useEffect(() => {
     if (isOpen) {
       fetchRooms();
     }
   }, [isOpen, checkIn, checkOut]);
+
+  // Reset room number when stays change
+  useEffect(() => {
+    setRoomNumber('auto');
+  }, [selectedRoomId, checkIn, checkOut]);
 
   const fetchRooms = async () => {
     setLoadingRooms(true);
@@ -71,11 +79,15 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
       return;
     }
 
-    // 2. Fetch overlapping active bookings
+    // 2. Fetch overlapping active bookings (including special_requests to check room assignment)
     const { data: bookingData, error: bookingError } = await supabase
       .from('bookings')
-      .select('room_id, check_in, check_out, room_quantity')
+      .select('room_id, check_in, check_out, room_quantity, special_requests')
       .neq('status', 'cancelled');
+
+    if (bookingData) {
+      setAllBookings(bookingData);
+    }
 
     let calculatedRooms = roomData.map((room: any) => {
       const totalRooms = room.total_rooms || 10;
@@ -86,6 +98,7 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
           title: room.title,
           price: room.price,
           available_rooms: totalRooms,
+          total_rooms: totalRooms,
           pax: room.pax
         };
       }
@@ -122,6 +135,7 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
         title: room.title,
         price: room.price,
         available_rooms: available,
+        total_rooms: totalRooms,
         pax: room.pax
       };
     });
@@ -168,6 +182,49 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
   // Calculate default deposit or balance
   const dueNow = paymentStatus === 'full' ? totalPrice : (customDeposit ? Number(customDeposit) : totalPrice / 2);
   const balanceDue = totalPrice - dueNow;
+
+  const getAvailableRoomNumbers = () => {
+    if (!selectedRoomId || !selectedRoom) return [];
+    const total = selectedRoom.total_rooms || 10;
+    const occupied = new Set<number>();
+    
+    const targetStart = new Date(checkIn).getTime();
+    const targetEnd = new Date(checkOut).getTime();
+    
+    const overlapping = allBookings.filter(b => {
+      if (b.room_id !== selectedRoomId) return false;
+      const bStart = new Date(b.check_in).getTime();
+      const bEnd = new Date(b.check_out).getTime();
+      return bStart < targetEnd && bEnd > targetStart;
+    });
+    
+    const autoAssignBookings: any[] = [];
+    overlapping.forEach(b => {
+      const match = b.special_requests?.match(/\[Room (\d+)\]/);
+      if (match) {
+        occupied.add(parseInt(match[1]));
+      } else {
+        autoAssignBookings.push(b);
+      }
+    });
+    
+    autoAssignBookings.forEach(() => {
+      for (let i = 1; i <= total; i++) {
+        if (!occupied.has(i)) {
+          occupied.add(i);
+          break;
+        }
+      }
+    });
+    
+    const available = [];
+    for (let i = 1; i <= total; i++) {
+      if (!occupied.has(i)) {
+        available.push(i);
+      }
+    }
+    return available;
+  };
 
   const handleNameChange = (val: string) => {
     const sanitized = val.replace(/[^a-zA-ZÀ-ÿ\s\-'.]/g, '');
@@ -231,6 +288,9 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
       // 2. Create Booking
       const bookingId = crypto.randomUUID();
       const ref = `G8-WI-${Date.now().toString(36).toUpperCase().slice(-5)}`;
+      const finalSpecialRequests = roomNumber !== 'auto'
+        ? `[Room ${roomNumber}] ${specialRequests}`.trim()
+        : specialRequests;
 
       const { error: bookingError } = await supabase
         .from('bookings')
@@ -244,7 +304,7 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
           status: bookingStatus,
           reference_number: ref,
           booking_ref: ref,
-          special_requests: specialRequests,
+          special_requests: finalSpecialRequests,
           room_quantity: roomQuantity
         }]);
 
@@ -386,42 +446,68 @@ export default function WalkInBookingModal({ isOpen, onClose, onSuccess }: WalkI
                   </select>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Select Room Assignment *</label>
+                <select
+                  value={roomNumber}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setRoomNumber(val);
+                    if (val !== 'auto') {
+                      setRoomQuantity(1);
+                    }
+                  }}
+                  className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm font-medium"
+                >
+                  <option value="auto">Auto-Assign (System Decides)</option>
+                  {getAvailableRoomNumbers().map(num => (
+                    <option key={num} value={num.toString()}>
+                      Room {num} (Available)
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-3 md:col-span-2">
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                     Quantity * 
-                    <span className="text-[9px] text-[#FBBF24] ml-1">({selectedRoom?.available_rooms || 0} avail)</span>
+                    {roomNumber === 'auto' ? (
+                      <span className="text-[9px] text-[#FBBF24] ml-1">({selectedRoom?.available_rooms || 0} avail)</span>
+                    ) : (
+                      <span className="text-[9px] text-slate-500 ml-1">(Locked to 1 for specific room)</span>
+                    )}
                   </label>
                   <input
                     type="number"
                     required
                     min="1"
+                    disabled={roomNumber !== 'auto'}
                     max={selectedRoom?.available_rooms || 1}
-                    value={roomQuantity}
+                    value={roomNumber !== 'auto' ? 1 : roomQuantity}
                     onChange={e => {
                       const maxVal = selectedRoom?.available_rooms || 1;
                       const val = Math.min(maxVal, Math.max(1, Number(e.target.value)));
                       setRoomQuantity(val);
                     }}
-                    className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm"
+                    className="w-full bg-[#05101A] border border-[#1a365d] rounded-xl px-4 py-2.5 text-white focus:border-yellow-400 outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                     Guests Count *
                     <span className="text-[9px] text-[#FBBF24] ml-1">
-                      (Max: {parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4') * roomQuantity} pax)
+                      (Max: {parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4') * (roomNumber !== 'auto' ? 1 : roomQuantity)} pax)
                     </span>
                   </label>
                   <input
                     type="number"
                     required
                     min="1"
-                    max={parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4') * roomQuantity}
+                    max={parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4') * (roomNumber !== 'auto' ? 1 : roomQuantity)}
                     value={guestsCount}
                     onChange={e => {
                       const maxPax = parseInt(selectedRoom?.pax.match(/\d+$/)?.[0] || selectedRoom?.pax.match(/\d+/)?.[0] || '4');
-                      const maxCapacity = maxPax * roomQuantity;
+                      const maxCapacity = maxPax * (roomNumber !== 'auto' ? 1 : roomQuantity);
                       const val = Math.min(maxCapacity, Math.max(1, Number(e.target.value)));
                       setGuestsCount(val);
                     }}
